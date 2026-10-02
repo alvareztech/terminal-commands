@@ -1,64 +1,36 @@
-import {
-  Action,
-  ActionPanel,
-  closeMainWindow,
-  Icon,
-  Keyboard,
-  LaunchProps,
-  List,
-  PopToRootType,
-  showToast,
-  Toast,
-} from "@raycast/api";
-import { createDeeplink, showFailureToast, useLocalStorage } from "@raycast/utils";
+import { Action, ActionPanel, closeMainWindow, Icon, Keyboard, List, open } from "@raycast/api";
+import { showFailureToast, useLocalStorage } from "@raycast/utils";
 import { randomUUID } from "crypto";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CreateCommandForm } from "./create-command-form";
-import { DEFAULT_COMMANDS, getSavedCommands, SavedCommand, STORAGE_KEY } from "./storage";
-import { runInTerminal } from "./terminal";
+import { DEFAULT_COMMANDS, getScriptPath, SavedCommand, STORAGE_KEY, writeScripts } from "./storage";
 
-export default function Command(props: LaunchProps<{ launchContext?: { id?: string } }>) {
-  const id = props.launchContext?.id;
-  return id ? <RunSavedCommand id={id} /> : <SavedCommandsList />;
-}
+const TERMINAL = "com.apple.Terminal";
 
-async function run(savedCommand: SavedCommand) {
-  try {
-    await runInTerminal(savedCommand.command);
-    await closeMainWindow({ popToRootType: PopToRootType.Immediate });
-  } catch (error) {
-    await showFailureToast(error, { title: "Could not open Terminal" });
-  }
-}
-
-// Launched from a quicklink: runs the saved command right away instead of showing the list.
-function RunSavedCommand(props: { id: string }) {
-  const [notFound, setNotFound] = useState(false);
-
-  useEffect(() => {
-    getSavedCommands().then(async (commands) => {
-      const savedCommand = commands.find((savedCommand) => savedCommand.id === props.id);
-      if (savedCommand) {
-        await run(savedCommand);
-      } else {
-        setNotFound(true);
-        await showToast({ style: Toast.Style.Failure, title: "Command not found" });
-      }
-    });
-  }, [props.id]);
-
-  return notFound ? <SavedCommandsList /> : <List isLoading />;
-}
-
-function SavedCommandsList() {
+export default function Command() {
   const {
     value: commands,
     setValue: setCommands,
     isLoading,
   } = useLocalStorage<SavedCommand[]>(STORAGE_KEY, DEFAULT_COMMANDS);
 
+  useEffect(() => {
+    if (commands) {
+      writeScripts(commands).catch((error) => showFailureToast(error, { title: "Could not save scripts" }));
+    }
+  }, [commands]);
+
   async function createCommand(values: Omit<SavedCommand, "id">) {
     await setCommands([...(commands ?? []), { id: randomUUID(), ...values }]);
+  }
+
+  async function run(savedCommand: SavedCommand) {
+    try {
+      await open(getScriptPath(savedCommand), TERMINAL);
+      await closeMainWindow();
+    } catch (error) {
+      await showFailureToast(error, { title: "Could not open Terminal" });
+    }
   }
 
   const createAction = (
@@ -86,10 +58,7 @@ function SavedCommandsList() {
                 <ActionPanel>
                   <Action title="Run in Terminal" icon={Icon.Play} onAction={() => run(savedCommand)} />
                   <Action.CreateQuicklink
-                    quicklink={{
-                      name: savedCommand.name,
-                      link: createDeeplink({ command: "commands", context: { id: savedCommand.id } }),
-                    }}
+                    quicklink={{ name: savedCommand.name, link: getScriptPath(savedCommand), application: TERMINAL }}
                   />
                   {createAction}
                 </ActionPanel>

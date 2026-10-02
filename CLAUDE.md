@@ -14,10 +14,9 @@ Run `npm run build` and `npm run lint` before considering a change done.
 ## Structure
 
 - `package.json` — extension manifest. Each command in `commands` needs a `src/<name>.tsx` file with a default export.
-- `src/commands.tsx` — "My Commands": list of saved commands; runs them and creates quicklinks. When launched with `launchContext.id` (from a quicklink deeplink) it runs that command and closes instead of showing the list.
+- `src/commands.tsx` — "My Commands": list of saved commands; runs them and creates quicklinks.
 - `src/create-command-form.tsx` — form to create a command (name + multiline command).
-- `src/storage.ts` — `SavedCommand` type, defaults and `getSavedCommands()` (`LocalStorage`, key `commands`).
-- `src/terminal.ts` — `runInTerminal()`: opens Terminal.app via AppleScript and runs the command (passed as an argument, not interpolated).
+- `src/storage.ts` — `SavedCommand` type and defaults (`LocalStorage`, key `commands`). Each command is also written as an executable `<id>.command` script in `environment.supportPath/scripts`.
 - `assets/extension-icon.png` — 512×512 icon (currently a placeholder).
 - `CHANGELOG.md` — required by the Store; add an entry for every user-facing change.
 - `raycast-env.d.ts` — auto-generated; don't edit or commit it.
@@ -28,7 +27,8 @@ Run `npm run build` and `npm run lint` before considering a change done.
 - Action titles must be Title Case (enforced by `@raycast/prefer-title-case`).
 - Use `@raycast/api` components (`Detail`, `List`, `Form`, `ActionPanel`…) and `@raycast/utils` hooks instead of reimplementing them.
 - `typescript` must stay below 6.1 (required by `@raycast/eslint-config`), and `@types/react`/`@types/node` must match `@raycast/api`'s peerDependencies.
-- The extension has a single command, "My Commands". Don't add extra commands for plumbing (they show up in Raycast's root search); quicklinks deeplink to `commands` with a `launchContext` instead.
+- The extension has a single command, "My Commands". Don't add extra commands for plumbing (they show up in Raycast's root search).
+- Running a command = opening its `.command` script with Terminal. Quicklinks point to that same file (with Terminal as the application), so they never open the extension's UI.
 - No hotkey features: the user doesn't want them.
 - Before publishing, `author` in `package.json` must be the real raycast.com username.
 
