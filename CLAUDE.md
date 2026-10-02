@@ -19,7 +19,7 @@ Run `npm run build` and `npm run lint` before considering a change done.
 - `src/run-command.ts` — "Run Saved Command" (no-view): runs the saved command whose `id` comes in `launchContext`. It's the target of the quicklink deeplinks; launched directly it opens My Commands.
 - `src/storage.ts` — `SavedCommand` type, defaults and `getSavedCommands()` (`LocalStorage`, key `commands`).
 - `src/terminal.ts` — `runInTerminal()`: opens Terminal.app via AppleScript and runs the command (passed as an argument, not interpolated).
-- `assets/extension-icon.png` — 512×512 icon (currently a placeholder).
+- `assets/extension-icon.png` — 512×512 icon with a transparent background.
 - `CHANGELOG.md` — required by the Store; add an entry for every user-facing change.
 - `raycast-env.d.ts` — auto-generated; don't edit or commit it.
 
