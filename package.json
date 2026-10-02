@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "terminol",
+  "name": "terminal-commands",
   "title": "Terminal Commands",
   "description": "Save your shell commands and run them in Terminal straight from Raycast.",
   "icon": "extension-icon.png",
