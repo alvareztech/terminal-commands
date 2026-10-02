@@ -1,6 +1,6 @@
 # Terminol
 
-Extensión de Raycast. Por ahora incluye un único comando, **Hola Mundo**.
+Extensión de Raycast. Por ahora incluye un único comando, **Ping 8.8.8.8**, que abre la Terminal y ejecuta `ping 8.8.8.8`.
 
 ## Desarrollo
 

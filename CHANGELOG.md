@@ -2,4 +2,4 @@
 
 ## [Initial Version] - {PR_MERGE_DATE}
 
-- Comando "Hola Mundo".
+- Comando "Ping 8.8.8.8", que abre la Terminal y ejecuta `ping 8.8.8.8`.
