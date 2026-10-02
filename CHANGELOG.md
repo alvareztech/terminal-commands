@@ -1,4 +1,4 @@
-# Terminol Changelog
+# Terminal Commands Changelog
 
 ## [Initial Version] - {PR_MERGE_DATE}
 

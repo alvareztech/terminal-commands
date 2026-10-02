@@ -1,4 +1,4 @@
-# Terminol
+# Terminal Commands
 
 Raycast extension (TypeScript + React) to be published on the Raycast Store. It lets the user save their own shell commands and run them in Terminal.
 
