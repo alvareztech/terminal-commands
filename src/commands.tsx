@@ -1,11 +1,9 @@
-import { Action, ActionPanel, closeMainWindow, Icon, Keyboard, List, open } from "@raycast/api";
-import { showFailureToast, useLocalStorage } from "@raycast/utils";
+import { Action, ActionPanel, closeMainWindow, Icon, Keyboard, List } from "@raycast/api";
+import { createDeeplink, showFailureToast, useLocalStorage } from "@raycast/utils";
 import { randomUUID } from "crypto";
-import { useEffect } from "react";
 import { CreateCommandForm } from "./create-command-form";
-import { DEFAULT_COMMANDS, getScriptPath, SavedCommand, STORAGE_KEY, writeScripts } from "./storage";
-
-const TERMINAL = "com.apple.Terminal";
+import { DEFAULT_COMMANDS, SavedCommand, STORAGE_KEY } from "./storage";
+import { runInTerminal } from "./terminal";
 
 export default function Command() {
   const {
@@ -14,19 +12,13 @@ export default function Command() {
     isLoading,
   } = useLocalStorage<SavedCommand[]>(STORAGE_KEY, DEFAULT_COMMANDS);
 
-  useEffect(() => {
-    if (commands) {
-      writeScripts(commands).catch((error) => showFailureToast(error, { title: "Could not save scripts" }));
-    }
-  }, [commands]);
-
   async function createCommand(values: Omit<SavedCommand, "id">) {
     await setCommands([...(commands ?? []), { id: randomUUID(), ...values }]);
   }
 
   async function run(savedCommand: SavedCommand) {
     try {
-      await open(getScriptPath(savedCommand), TERMINAL);
+      await runInTerminal(savedCommand.command);
       await closeMainWindow();
     } catch (error) {
       await showFailureToast(error, { title: "Could not open Terminal" });
@@ -58,7 +50,10 @@ export default function Command() {
                 <ActionPanel>
                   <Action title="Run in Terminal" icon={Icon.Play} onAction={() => run(savedCommand)} />
                   <Action.CreateQuicklink
-                    quicklink={{ name: savedCommand.name, link: getScriptPath(savedCommand), application: TERMINAL }}
+                    quicklink={{
+                      name: savedCommand.name,
+                      link: createDeeplink({ command: "run-command", context: { id: savedCommand.id } }),
+                    }}
                   />
                   {createAction}
                 </ActionPanel>

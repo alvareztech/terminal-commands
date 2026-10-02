@@ -16,7 +16,9 @@ Run `npm run build` and `npm run lint` before considering a change done.
 - `package.json` — extension manifest. Each command in `commands` needs a `src/<name>.tsx` file with a default export.
 - `src/commands.tsx` — "My Commands": list of saved commands; runs them and creates quicklinks.
 - `src/create-command-form.tsx` — form to create a command (name + multiline command).
-- `src/storage.ts` — `SavedCommand` type and defaults (`LocalStorage`, key `commands`). Each command is also written as an executable `<id>.command` script in `environment.supportPath/scripts`.
+- `src/run-command.ts` — "Run Saved Command" (no-view): runs the saved command whose `id` comes in `launchContext`. It's the target of the quicklink deeplinks; launched directly it opens My Commands.
+- `src/storage.ts` — `SavedCommand` type, defaults and `getSavedCommands()` (`LocalStorage`, key `commands`).
+- `src/terminal.ts` — `runInTerminal()`: opens Terminal.app via AppleScript and runs the command (passed as an argument, not interpolated).
 - `assets/extension-icon.png` — 512×512 icon (currently a placeholder).
 - `CHANGELOG.md` — required by the Store; add an entry for every user-facing change.
 - `raycast-env.d.ts` — auto-generated; don't edit or commit it.
@@ -27,8 +29,7 @@ Run `npm run build` and `npm run lint` before considering a change done.
 - Action titles must be Title Case (enforced by `@raycast/prefer-title-case`).
 - Use `@raycast/api` components (`Detail`, `List`, `Form`, `ActionPanel`…) and `@raycast/utils` hooks instead of reimplementing them.
 - `typescript` must stay below 6.1 (required by `@raycast/eslint-config`), and `@types/react`/`@types/node` must match `@raycast/api`'s peerDependencies.
-- The extension has a single command, "My Commands". Don't add extra commands for plumbing (they show up in Raycast's root search).
-- Running a command = opening its `.command` script with Terminal. Quicklinks point to that same file (with Terminal as the application), so they never open the extension's UI.
+- Quicklinks deeplink to the no-view `run-command` so they run without any UI. The user accepted that "Run Saved Command" shows up in root search; don't add other plumbing commands. Rejected alternatives: deeplinking to the `commands` view (flashes a loading screen) and opening `.command` scripts in Terminal (prints the script path and login noise).
 - No hotkey features: the user doesn't want them.
 - Before publishing, `author` in `package.json` must be the real raycast.com username.
 

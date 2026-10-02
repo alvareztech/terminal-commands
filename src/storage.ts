@@ -1,6 +1,4 @@
-import { environment, LocalStorage } from "@raycast/api";
-import { mkdir, writeFile } from "fs/promises";
-import { join } from "path";
+import { LocalStorage } from "@raycast/api";
 
 export interface SavedCommand {
   id: string;
@@ -12,23 +10,7 @@ export const STORAGE_KEY = "commands";
 
 export const DEFAULT_COMMANDS: SavedCommand[] = [{ id: "ping-8-8-8-8", name: "Ping 8.8.8.8", command: "ping 8.8.8.8" }];
 
-const SCRIPTS_DIR = join(environment.supportPath, "scripts");
-
 export async function getSavedCommands(): Promise<SavedCommand[]> {
   const stored = await LocalStorage.getItem<string>(STORAGE_KEY);
   return stored ? JSON.parse(stored) : DEFAULT_COMMANDS;
-}
-
-// Terminal runs `.command` files when it opens them, which is what both "Run in Terminal" and quicklinks rely on.
-export function getScriptPath(savedCommand: SavedCommand) {
-  return join(SCRIPTS_DIR, `${savedCommand.id}.command`);
-}
-
-export async function writeScripts(commands: SavedCommand[]) {
-  await mkdir(SCRIPTS_DIR, { recursive: true });
-  await Promise.all(
-    commands.map((savedCommand) =>
-      writeFile(getScriptPath(savedCommand), `#!/bin/zsh -l\n${savedCommand.command}\n`, { mode: 0o755 }),
-    ),
-  );
 }
