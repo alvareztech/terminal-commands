@@ -15,12 +15,6 @@
       "title": "My Commands",
       "description": "List your saved commands, run them in Terminal, or create new ones.",
       "mode": "view"
-    },
-    {
-      "name": "run-command",
-      "title": "Run Saved Command",
-      "description": "Runs a saved command in Terminal. Used by the quicklinks created from My Commands.",
-      "mode": "no-view"
     }
   ],
   "dependencies": {
