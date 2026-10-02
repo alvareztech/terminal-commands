@@ -29,7 +29,7 @@ export function CreateCommandForm(props: { onCreate: (values: CreateCommandValue
       }
     >
       <Form.TextField title="Name" placeholder="Ping Google DNS" {...itemProps.name} />
-      <Form.TextField title="Command" placeholder="ping 8.8.8.8" {...itemProps.command} />
+      <Form.TextArea title="Command" placeholder={"cd ~/Developer\nls -la"} {...itemProps.command} />
     </Form>
   );
 }
