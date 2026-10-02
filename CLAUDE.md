@@ -1,32 +1,34 @@
 # Terminol
 
-Extensión de Raycast (TypeScript + React) que se publicará en la Raycast Store.
+Raycast extension (TypeScript + React) to be published on the Raycast Store. It lets the user save their own shell commands and run them in Terminal.
 
-## Comandos
+## Commands
 
-- `npm run dev` — abre la extensión en Raycast en modo desarrollo con recarga automática
-- `npm run build` — compila y valida la extensión
-- `npm run lint` / `npm run fix-lint` — valida `package.json`, iconos, ESLint y Prettier
-- `npm run publish` — publica en la Raycast Store (abre un PR en `raycast/extensions`)
+- `npm run dev` — opens the extension in Raycast in development mode with hot reload
+- `npm run build` — compiles and validates the extension
+- `npm run lint` / `npm run fix-lint` — validates `package.json`, icons, ESLint and Prettier
+- `npm run publish` — publishes to the Raycast Store (opens a PR on `raycast/extensions`)
 
-Ejecuta `npm run build` y `npm run lint` antes de dar un cambio por terminado.
+Run `npm run build` and `npm run lint` before considering a change done.
 
-## Estructura
+## Structure
 
-- `package.json` — manifiesto de la extensión. Cada comando en `commands` necesita un archivo `src/<name>.tsx` con un `export default`.
-- `src/` — un archivo por comando.
-- `assets/extension-icon.png` — icono de 512×512 (ahora es provisional).
-- `CHANGELOG.md` — obligatorio para la Store; añade una entrada en cada cambio visible para el usuario.
-- `raycast-env.d.ts` — se genera automáticamente; no lo edites ni lo subas al repo.
+- `package.json` — extension manifest. Each command in `commands` needs a `src/<name>.tsx` file with a default export.
+- `src/commands.tsx` — "My Commands": list of saved commands (stored in `LocalStorage` under the `commands` key).
+- `src/create-command-form.tsx` — form to create a command (name + command).
+- `src/terminal.ts` — `runInTerminal()`: opens Terminal.app via AppleScript and runs the command (passed as an argument, not interpolated).
+- `assets/extension-icon.png` — 512×512 icon (currently a placeholder).
+- `CHANGELOG.md` — required by the Store; add an entry for every user-facing change.
+- `raycast-env.d.ts` — auto-generated; don't edit or commit it.
 
-## Convenciones
+## Conventions
 
-- Los textos visibles para el usuario van en español.
-- Usa los componentes de `@raycast/api` (`Detail`, `List`, `Form`, `ActionPanel`…) y los hooks de `@raycast/utils` en lugar de reimplementarlos.
-- `typescript` debe quedarse por debajo de 6.1 (lo exige `@raycast/eslint-config`), y `@types/react`/`@types/node` deben coincidir con las peerDependencies de `@raycast/api`.
-- Antes de publicar, `author` en `package.json` tiene que ser el usuario real de raycast.com.
+- Language: everything in the repo is in English — code, identifiers, UI strings, file names, docs, commit messages and PR descriptions. Only the conversation with the user is in Spanish/Spanglish.
+- Action titles must be Title Case (enforced by `@raycast/prefer-title-case`).
+- Use `@raycast/api` components (`Detail`, `List`, `Form`, `ActionPanel`…) and `@raycast/utils` hooks instead of reimplementing them.
+- `typescript` must stay below 6.1 (required by `@raycast/eslint-config`), and `@types/react`/`@types/node` must match `@raycast/api`'s peerDependencies.
+- Before publishing, `author` in `package.json` must be the real raycast.com username.
 
 ## Git
 
-- No añadas nunca la línea `Co-Authored-By: Claude ...` ni ninguna otra atribución a Claude en los mensajes de commit ni en las descripciones de PR.
-- Escribe los mensajes de commit en español.
+- Never add a `Co-Authored-By: Claude ...` line or any other Claude attribution to commit messages or PR descriptions.

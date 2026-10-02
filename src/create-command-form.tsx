@@ -1,14 +1,14 @@
 import { Action, ActionPanel, Form, useNavigation } from "@raycast/api";
 import { FormValidation, useForm } from "@raycast/utils";
 
-interface CrearComandoValues {
+interface CreateCommandValues {
   name: string;
   command: string;
 }
 
-export function CrearComando(props: { onCreate: (values: CrearComandoValues) => Promise<void> }) {
+export function CreateCommandForm(props: { onCreate: (values: CreateCommandValues) => Promise<void> }) {
   const { pop } = useNavigation();
-  const { handleSubmit, itemProps } = useForm<CrearComandoValues>({
+  const { handleSubmit, itemProps } = useForm<CreateCommandValues>({
     async onSubmit(values) {
       await props.onCreate({ name: values.name.trim(), command: values.command.trim() });
       pop();
@@ -21,15 +21,15 @@ export function CrearComando(props: { onCreate: (values: CrearComandoValues) => 
 
   return (
     <Form
-      navigationTitle="Crear comando"
+      navigationTitle="Create Command"
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Guardar Comando" onSubmit={handleSubmit} />
+          <Action.SubmitForm title="Save Command" onSubmit={handleSubmit} />
         </ActionPanel>
       }
     >
-      <Form.TextField title="Nombre" placeholder="Ping Google DNS" {...itemProps.name} />
-      <Form.TextField title="Comando" placeholder="ping 8.8.8.8" {...itemProps.command} />
+      <Form.TextField title="Name" placeholder="Ping Google DNS" {...itemProps.name} />
+      <Form.TextField title="Command" placeholder="ping 8.8.8.8" {...itemProps.command} />
     </Form>
   );
 }

@@ -1,17 +1,17 @@
 # Terminol
 
-Extensión de Raycast para guardar tus propios comandos y ejecutarlos en la Terminal. El comando **Mis Comandos** muestra la lista (al principio solo `ping 8.8.8.8` de ejemplo); pulsa Enter para ejecutar uno o `⌘N` para crear uno nuevo con nombre y comando.
+Raycast extension to save your own commands and run them in Terminal. The **My Commands** command shows the list (starting with a `ping 8.8.8.8` example); press Enter to run one or `⌘N` to create a new one with a name and a command.
 
-## Desarrollo
+## Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-`npm run dev` abre la extensión en Raycast en modo desarrollo con recarga automática.
+`npm run dev` opens the extension in Raycast in development mode with hot reload.
 
-## Publicar
+## Publishing
 
 ```bash
 npm run lint
