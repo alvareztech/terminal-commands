@@ -14,8 +14,8 @@ Run `npm run build` and `npm run lint` before considering a change done.
 ## Structure
 
 - `package.json` — extension manifest. Each command in `commands` needs a `src/<name>.tsx` file with a default export.
-- `src/commands.tsx` — "My Commands": list of saved commands; runs them and creates quicklinks.
-- `src/create-command-form.tsx` — form to create a command (name + multiline command).
+- `src/commands.tsx` — "My Commands": list of saved commands; runs, edits and deletes them, and creates quicklinks.
+- `src/command-form.tsx` — form to create or edit a command (name + multiline command).
 - `src/run-command.ts` — "Run Saved Command" (no-view): runs the saved command whose `id` comes in `launchContext`. It's the target of the quicklink deeplinks; launched directly it opens My Commands.
 - `src/storage.ts` — `SavedCommand` type, defaults and `getSavedCommands()` (`LocalStorage`, key `commands`).
 - `src/terminal.ts` — `runInTerminal()`: opens Terminal.app via AppleScript and runs the command (passed as an argument, not interpolated).

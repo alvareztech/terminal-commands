@@ -1,7 +1,7 @@
-import { Action, ActionPanel, closeMainWindow, Icon, Keyboard, List } from "@raycast/api";
+import { Action, ActionPanel, Alert, closeMainWindow, confirmAlert, Icon, Keyboard, List } from "@raycast/api";
 import { createDeeplink, showFailureToast, useLocalStorage } from "@raycast/utils";
 import { randomUUID } from "crypto";
-import { CreateCommandForm } from "./create-command-form";
+import { CommandForm, CommandFormValues } from "./command-form";
 import { DEFAULT_COMMANDS, SavedCommand, STORAGE_KEY } from "./storage";
 import { runInTerminal } from "./terminal";
 
@@ -12,8 +12,26 @@ export default function Command() {
     isLoading,
   } = useLocalStorage<SavedCommand[]>(STORAGE_KEY, DEFAULT_COMMANDS);
 
-  async function createCommand(values: Omit<SavedCommand, "id">) {
+  async function createCommand(values: CommandFormValues) {
     await setCommands([...(commands ?? []), { id: randomUUID(), ...values }]);
+  }
+
+  async function editCommand(id: string, values: CommandFormValues) {
+    await setCommands(
+      (commands ?? []).map((savedCommand) => (savedCommand.id === id ? { id, ...values } : savedCommand)),
+    );
+  }
+
+  async function deleteCommand(savedCommand: SavedCommand) {
+    const confirmed = await confirmAlert({
+      title: `Delete "${savedCommand.name}"?`,
+      message: "Quicklinks that point to this command will stop working.",
+      icon: Icon.Trash,
+      primaryAction: { title: "Delete", style: Alert.ActionStyle.Destructive },
+    });
+    if (confirmed) {
+      await setCommands((commands ?? []).filter(({ id }) => id !== savedCommand.id));
+    }
   }
 
   async function run(savedCommand: SavedCommand) {
@@ -30,7 +48,7 @@ export default function Command() {
       title="Create Command"
       icon={Icon.Plus}
       shortcut={Keyboard.Shortcut.Common.New}
-      target={<CreateCommandForm onCreate={createCommand} />}
+      target={<CommandForm onSubmit={createCommand} />}
     />
   );
 
@@ -55,7 +73,25 @@ export default function Command() {
                       link: createDeeplink({ command: "run-command", context: { id: savedCommand.id } }),
                     }}
                   />
+                  <Action.Push
+                    title="Edit Command"
+                    icon={Icon.Pencil}
+                    shortcut={Keyboard.Shortcut.Common.Edit}
+                    target={
+                      <CommandForm
+                        initialValues={{ name: savedCommand.name, command: savedCommand.command }}
+                        onSubmit={(values) => editCommand(savedCommand.id, values)}
+                      />
+                    }
+                  />
                   {createAction}
+                  <Action
+                    title="Delete Command"
+                    icon={Icon.Trash}
+                    style={Action.Style.Destructive}
+                    shortcut={Keyboard.Shortcut.Common.Remove}
+                    onAction={() => deleteCommand(savedCommand)}
+                  />
                 </ActionPanel>
               }
             />

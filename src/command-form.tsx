@@ -1,18 +1,22 @@
 import { Action, ActionPanel, Form, useNavigation } from "@raycast/api";
 import { FormValidation, useForm } from "@raycast/utils";
 
-interface CreateCommandValues {
+export interface CommandFormValues {
   name: string;
   command: string;
 }
 
-export function CreateCommandForm(props: { onCreate: (values: CreateCommandValues) => Promise<void> }) {
+export function CommandForm(props: {
+  initialValues?: CommandFormValues;
+  onSubmit: (values: CommandFormValues) => Promise<void>;
+}) {
   const { pop } = useNavigation();
-  const { handleSubmit, itemProps } = useForm<CreateCommandValues>({
+  const { handleSubmit, itemProps } = useForm<CommandFormValues>({
     async onSubmit(values) {
-      await props.onCreate({ name: values.name.trim(), command: values.command.trim() });
+      await props.onSubmit({ name: values.name.trim(), command: values.command.trim() });
       pop();
     },
+    initialValues: props.initialValues,
     validation: {
       name: FormValidation.Required,
       command: FormValidation.Required,
@@ -21,7 +25,7 @@ export function CreateCommandForm(props: { onCreate: (values: CreateCommandValue
 
   return (
     <Form
-      navigationTitle="Create Command"
+      navigationTitle={props.initialValues ? "Edit Command" : "Create Command"}
       actions={
         <ActionPanel>
           <Action.SubmitForm title="Save Command" onSubmit={handleSubmit} />
